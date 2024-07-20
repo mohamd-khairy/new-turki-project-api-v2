@@ -36,6 +36,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use App\Services\TabbyApiService;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /*
 |--------------------------------------------------------------------------
@@ -504,6 +507,7 @@ Route::prefix("v2")->group(function () {
         });
 
 
+
         Route::prefix('carts')->middleware(['current_city', 'auth:sanctum'])->group(function () {
             Route::get('/', [\App\Http\Controllers\API\CartController::class, 'getCart']);
             Route::post('add-to-cart', [\App\Http\Controllers\API\CartController::class, 'addToCart']);
@@ -539,4 +543,64 @@ Route::prefix("v2")->group(function () {
             Route::get('/test', [\App\Http\Controllers\API\ProductController::class, 'getProductBySubCategoryWithLocationTest']);
         });
     });
+});
+
+Route::get('stream',  function () // solution 2 for server
+{
+    $response = new StreamedResponse(function () {
+        // Check for orders created within the last minute
+
+        $sse = DB::table('orders')
+            ->select(
+                'orders.*',
+                'customers.name as customer_name',
+                'customers.mobile as customer_mobile',
+                'order_states.state_ar as order_state_ar',
+                'order_states.state_en as order_state_en',
+                'shalwatas.name_ar as shalwata_name',
+                'shalwatas.price as shalwata_price',
+                'payment_types.name_ar as payment_type_name',
+                'payment_types.code as payment_type_code',
+                'delivery_periods.name_ar as delivery_period_name',
+                'delivery_periods.time_hhmm as delivery_period_time',
+                'payments.price as payment_price',
+                'payments.status as payment_status',
+                'addresses.address as address_address',
+                'addresses.lat as address_lat',
+                'addresses.long as address_long',
+                'addresses.country_id as address_country_id',
+                'addresses.city_id as address_city_id',
+                'cities.name_ar as city_name',
+                'users.username as sales_officer_name',
+                'u.username as driver_name',
+                'u.id as driver_id'
+            )
+            ->where('is_new', 1)
+            ->join('customers', 'customers.id', '=', 'orders.customer_id')
+            ->leftJoin('users as u', 'u.id', '=', 'orders.user_id')
+            ->leftJoin('users', 'users.id', '=', 'orders.sales_representative_id')
+            ->leftJoin('order_states', 'order_states.code', '=', 'orders.order_state_id')
+            ->leftJoin('shalwatas', 'shalwatas.id', '=', 'orders.shalwata_id')
+            ->leftJoin('payment_types', 'payment_types.id', '=', 'orders.payment_type_id')
+            ->leftJoin('delivery_periods', 'delivery_periods.id', '=', 'orders.delivery_period_id')
+            ->leftJoin('payments', 'payments.id', '=', 'orders.payment_id')
+            ->leftJoin('addresses', 'addresses.id', '=', 'orders.address_id')
+            ->leftJoin('cities', 'cities.id', '=', 'addresses.city_id')
+            ->first();
+
+        if ($sse) {
+            // $sse->update(['is_new' => 0]);
+            DB::table('orders')
+                ->where('id', $sse->id)
+                ->update(['is_new' => false]);
+        }
+        echo 'data: ' . json_encode($sse)  . "\n\n";
+        ob_flush();
+        flush();
+        sleep(1);
+    });
+    $response->headers->set('Content-Type', 'text/event-stream');
+    $response->headers->set('X-Accel-Buffering', 'no');
+    $response->headers->set('Cach-Control', 'no-cache');
+    return $response;
 });

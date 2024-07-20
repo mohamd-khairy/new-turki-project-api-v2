@@ -54,7 +54,8 @@ class Order extends Model
         'sales_representative_id',
         'driver_name',
         'printed_at',
-        'foodics_integrate_id'
+        'foodics_integrate_id',
+        'is_new'
     ];
 
     protected $hidden = ['address'];
