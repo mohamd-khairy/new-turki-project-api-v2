@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c55dab92234824e1b479d2641410b69e",
+    "content-hash": "8a1294cd92e87f3c63a7e489066d3f5f",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1554,6 +1554,71 @@
                 }
             ],
             "time": "2022-05-21T17:30:32+00:00"
+        },
+        {
+            "name": "khairy/laravel-sse-stream",
+            "version": "v2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mohamd-khairy/laravel-sse-stream.git",
+                "reference": "f5054d8a23f2c916f1f5523545aeb9a402a43189"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mohamd-khairy/laravel-sse-stream/zipball/f5054d8a23f2c916f1f5523545aeb9a402a43189",
+                "reference": "f5054d8a23f2c916f1f5523545aeb9a402a43189",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~5|~6|~7|~8|~9|~10|~11",
+                "php": "^7.0|^8.0|^8.1|^8.2|^8.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Khairy\\LaravelSSEStream\\SSEServiceProvider"
+                    ],
+                    "aliases": {
+                        "SSE": "Khairy\\LaravelSSEStream\\Facades\\SSEFacade"
+                    }
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Helpers/helper.php"
+                ],
+                "psr-4": {
+                    "Khairy\\LaravelSSEStream\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "mohamed khairy",
+                    "email": "mohamed.khairy.eg@gmail.com"
+                }
+            ],
+            "description": "Laravel package to provide Server Sent Events functionality for your app.",
+            "homepage": "https://github.com/mohamd-khairy/laravel-sse-stream",
+            "keywords": [
+                "Sever Sent Events",
+                "event",
+                "laravel",
+                "notifications",
+                "polling",
+                "realtime",
+                "server",
+                "sse"
+            ],
+            "support": {
+                "issues": "https://github.com/mohamd-khairy/laravel-sse-stream/issues",
+                "source": "https://github.com/mohamd-khairy/laravel-sse-stream/tree/v2.0"
+            },
+            "time": "2024-08-29T12:18:56+00:00"
         },
         {
             "name": "laravel/framework",
@@ -8426,5 +8491,5 @@
     "platform-overrides": {
         "php": "7.3"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
